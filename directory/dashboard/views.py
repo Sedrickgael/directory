@@ -9,8 +9,9 @@ from django.views.decorators.csrf import csrf_exempt
 
 # default page (all teacher)
 def index(request):
+    teachers = models.Teacher.objects.filter(statut=True)
     datas = {
-
+        'teachers':teachers,
     }
     return render(request, 'pages/teacher.html', datas)
 
@@ -24,8 +25,9 @@ def login(request):
 
 # show all subjects
 def subjects(request):
+    subjects = models.Subject.objects.filter(statut=True)
     datas = {
-
+        'subjects':subjects,
     }
     return render(request, 'pages/subjects.html', datas)
 

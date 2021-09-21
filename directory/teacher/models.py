@@ -34,7 +34,7 @@ class Teacher(models.Model):
     # TODO: Define fields here
     last_name = models.CharField(max_length=50)
     first_name = models.CharField(max_length=250)
-    email = models.EmailField(max_length=254)
+    email = models.EmailField(max_length=254, unique=True)
     profile_picture = models.ImageField(upload_to="Teachers/Profile_Picture", default="default.png")
     phone_number = models.CharField(max_length=50)
     room_number = models.CharField(max_length=10)

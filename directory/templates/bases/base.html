@@ -62,9 +62,15 @@
             <li>
               <a href="{% url 'subjects' %}" class="collapsible-header waves-effect"><i class="w-fa fas fa-book"></i>Subjects</a>
             </li>
+            {% if user.is_authenticated %}
+            <li>
+              <a href="{% url 'logout' %}" class="collapsible-header waves-effect"><i class="w-fa fas fa-lock"></i>Logout</a>
+            </li>
+            {% else %}
             <li>
               <a href="{% url 'login' %}" class="collapsible-header waves-effect"><i class="w-fa fas fa-lock"></i>Login</a>
             </li>
+            {% endif %}
 
           </ul>
         </li>
@@ -100,8 +106,8 @@
             <i class="fas fa-user"></i> <span class="clearfix d-none d-sm-inline-block">Profile</span>
           </a>
           <div class="dropdown-menu dropdown-menu-right" aria-labelledby="userDropdown">
-            <a class="dropdown-item" href="#">Log Out</a>
-            <a class="dropdown-item" href="#">My account</a>
+            <a class="dropdown-item" href="{% url 'logout' %}">Log Out</a>
+            <a class="dropdown-item" target="blank" href="{% url 'admin:index' %}">My account</a>
           </div>
         </li>
         {% else %}
