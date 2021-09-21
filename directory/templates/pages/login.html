@@ -118,9 +118,6 @@
 
   </script>
 
-
-  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@10"></script>
-
   <!-- axios -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/axios/0.21.0/axios.min.js"></script>
 
@@ -149,13 +146,7 @@
             this.isSuccess = false
             this.isregister = true
             if (this.username == "" || this.password == "") {
-              Swal.fire({
-                                position: 'top-end',
-                                icon: 'warning',
-                                title: 'Merci de renseigner les champs',
-                                showConfirmButton: false,
-                                timer: 1500
-                            })
+              toastr.warning('Merci de renseigner les champs!');
               this.isSuccess = false
               this.isregister = false;
             } else {
@@ -171,13 +162,7 @@
                   this.isSuccess = true
                   this.message = response.data.message
                   this.success = response.data.success
-                  Swal.fire({
-                                        position: 'top-end',
-                                        icon: 'success',
-                                        title: this.message,
-                                        showConfirmButton: false,
-                                        timer: 1500
-                                    })
+                  toastr.success(this.message);
                   var url_string = window.location.href; //window.location.href
                   var url = new URL(url_string);
                   var next = url.searchParams.get("next");
@@ -192,13 +177,7 @@
                 } else {
                   this.message = response.data.message
                   this.success = response.data.success
-                  Swal.fire({
-                                        position: 'top-end',
-                                        icon: 'error',
-                                        title: this.message,
-                                        showConfirmButton: false,
-                                        timer: 1500
-                                    })
+                  toastr.error(this.message);
                   this.isSuccess = false
                 }
                 console.log("success variable" + this.isSuccess)
