@@ -1,4 +1,5 @@
 from django.db import models
+from django.utils.text import slugify
 
 # Create your models here.
 
@@ -12,9 +13,15 @@ class Subject(models.Model):
 
     # standar
 
-    statut = models.BooleanField()
+    statut = models.BooleanField(default=True)
     date_add = models.DateTimeField(auto_now_add=True)
     date_update = models.DateTimeField(auto_now=True)
+    slug = models.SlugField(unique=True, editable=False, null=True,  blank=True)
+
+    def save(self, *args, **kwargs):
+        self.slug = '-'.join((slugify(self.subject_name), slugify(self.id)))
+        super(Subject, self).save(*args, **kwargs)
+
 
     class Meta:
         """Meta definition for Subject."""
@@ -41,9 +48,17 @@ class Teacher(models.Model):
     subjects_taught = models.ManyToManyField(Subject, blank=True)
 
 
-    statut = models.BooleanField()
+    statut = models.BooleanField(default=True)
     date_add = models.DateTimeField(auto_now_add=True)
     date_update = models.DateTimeField(auto_now=True)
+
+
+    slug = models.SlugField(unique=True, editable=False, null=True,  blank=True)
+
+    def save(self, *args, **kwargs):
+        self.slug = '-'.join((slugify(self.last_name), slugify(self.id)))
+        super(Teacher, self).save(*args, **kwargs)
+
 
     class Meta:
         """Meta definition for Teacher."""

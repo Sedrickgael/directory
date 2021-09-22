@@ -4,7 +4,7 @@
 
 {% block content %}
 <!-- Main layout -->
-<main>
+<main  id="subject">
   <div class="container-fluid">
 
     <!-- Section: Team v.1 -->
@@ -14,208 +14,63 @@
       <div class="row text-center">
 
         <!-- Grid column -->
-        <div class="col-md-8 mb-4">
+        <div class="col-md-12 mb-4">
 
           <!-- Card -->
           <div class="card card-cascade cascading-admin-card user-card">
 
             <!-- Card Data -->
             <div class="admin-up d-flex justify-content-start">
-              <i class="fas fa-users info-color py-4 mr-3 z-depth-2"></i>
+              <i class="fas fa-book info-color py-4 mr-3 z-depth-2"></i>
               <div class="data">
-                <h5 class="font-weight-bold dark-grey-text">Edit Profile - <span class="text-muted">Complete your
-                    profile</span></h5>
+                <h5 class="font-weight-bold dark-grey-text">Add Subject - <span class="text-muted">Subject info</span></h5>
               </div>
             </div>
             <!-- Card Data -->
-
-            <!-- Card content -->
-            <div class="card-body card-body-cascade">
-
-              <!-- Grid row -->
-              <div class="row">
-
-                <!-- Grid column -->
-                <div class="col-lg-4">
-
-                  <div class="md-form form-sm mb-0">
-                    <input type="text" id="form12" class="form-control form-control-sm">
-                    <label for="form12" class="">Username</label>
+            <form class="md-form">
+              <!-- Card content -->
+              <div class="card-body card-body-cascade">
+  
+                <!-- Grid row -->
+                <div class="row">
+  
+                  <!-- Grid column -->
+                  <div class="col-lg-6">
+  
+                    <div class="md-form form-sm mb-0">
+                      <input type="text" v-model="subject_name" id="subject-name"  class="form-control form-control-sm">
+                      <label v-if="subject_name==''" for="subject-name" class="">Subject Name</label>
+                    </div>
+  
                   </div>
-
-                </div>
-                <!-- Grid column -->
-
-                <!-- Grid column -->
-                <div class="col-lg-4">
-
-                  <div class="md-form form-sm mb-0">
-                    <input type="text" id="form3" class="form-control form-control-sm">
-                    <label for="form3" class="">Email address</label>
+                  <div class="col-lg-6">
+  
+                    <div class="md-form form-sm mb-0">
+                      <input type="text" v-model="description" id="description" class="form-control form-control-sm">
+                      <label for="description" v-if="description==''" class="">Description</label>
+                    </div>
+  
                   </div>
-
+                  <!-- Grid column -->
                 </div>
-                <!-- Grid column -->
-
-                <!-- Grid column -->
-                <div class="col-lg-4">
-
-                  <div class="md-form form-sm mb-0">
-                    <input type="text" id="form4" class="form-control form-control-sm" disabled>
-                    <label for="form4" class="disabled">Company</label>
-                  </div>
-
-                </div>
-                <!-- Grid column -->
-
+                <!-- Grid row -->
+  
               </div>
-              <!-- Grid row -->
-
-              <!-- Grid row -->
-              <div class="row">
-
-                <!-- Grid column -->
-                <div class="col-md-6">
-
-                  <div class="md-form form-sm mb-0">
-                    <input type="text" id="form5" class="form-control form-control-sm">
-                    <label for="form5" class="">First name</label>
-                  </div>
-
-                </div>
-                <!-- Grid column -->
-
-                <!-- Grid column -->
-                <div class="col-md-6">
-
-                  <div class="md-form form-sm mb-0">
-                    <input type="text" id="form5" class="form-control form-control-sm">
-                    <label for="form5" class="">Last name</label>
-                  </div>
-
-                </div>
-                <!-- Grid column -->
-
-              </div>
-              <!-- Grid row -->
-
-              <!-- Grid row -->
-              <div class="row">
-
-                <!-- Grid column -->
-                <div class="col-md-12">
-
-                  <div class="md-form form-sm mb-0">
-                    <input type="text" id="form6" class="form-control form-control-sm">
-                    <label for="form6" class="">Address</label>
-                  </div>
-
-                </div>
-                <!-- Grid column -->
-
-              </div>
-              <!-- Grid row -->
-
-              <!-- Grid row -->
-              <div class="row">
-
-                <!-- Grid column -->
-                <div class="col-lg-4 col-md-12">
-
-                  <div class="md-form form-sm mb-0">
-                    <input type="text" id="form7" class="form-control form-control-sm">
-                    <label for="form7" class="">City</label>
-                  </div>
-
-                </div>
-                <!-- Grid column -->
-
-                <!-- Grid column -->
-                <div class="col-lg-4 col-md-6">
-
-                  <div class="md-form form-sm mb-0">
-                    <input type="text" id="form8" class="form-control form-control-sm">
-                    <label for="form8" class="">Country</label>
-                  </div>
-
-                </div>
-                <!-- Grid column -->
-
-                <!-- Grid column -->
-                <div class="col-lg-4 col-md-6">
-
-                  <div class="md-form form-sm mb-0">
-                    <input type="text" id="form9" class="form-control form-control-sm">
-                    <label for="form9" class="">Postal Code</label>
-                  </div>
-
-                </div>
-                <!-- Grid column -->
-
-              </div>
-              <!-- Grid row -->
-
-              <!-- Grid row -->
-              <div class="row">
-
-                <!-- Grid column -->
-                <div class="col-md-12">
-
-                  <h4 class="text-muted text-left my-4">About me</h4>
-
-                  <!-- Basic textarea -->
-                  <div class="md-form mb-0">
-                    <textarea type="text" id="form10" class="md-textarea form-control" rows="3"></textarea>
-                    <label for="form10">Basic textarea</label>
-                  </div>
-
-                </div>
-                <!-- Grid column -->
-
-              </div>
-              <!-- Grid row -->
-
+              <!-- Card content -->
+            </form>
+            {% if user.is_authenticated %}
+            <div class="text-center mb-4">
+              <button v-if="!isregister"  v-on:click.prevent="post_subject" class="btn purple-gradient btn-lg">Save</button>
+              <button v-if="isregister" disabled class="btn purple-gradient btn-lg">Save</button>
+              <button v-if="!isregister"  v-on:click.prevent="delete_subject" class="btn btn-danger btn-lg">Delete</button>
             </div>
-            <!-- Card content -->
-
+            {% endif %}
           </div>
           <!-- Card -->
 
         </div>
         <!-- Grid column -->
-
-        <!-- Grid column -->
-        <div class="col-md-4 mb-4">
-
-          <!-- Card -->
-          <div class="card profile-card">
-
-            <!-- Avatar -->
-            <div class="avatar z-depth-1-half mb-4">
-              <img src="https://mdbootstrap.com/img/Photos/Avatars/img%20(10).jpg" class="rounded-circle" alt="First sample avatar image">
-            </div>
-
-            <div class="card-body pt-0 mt-0">
-
-              <!-- Name -->
-              <h3 class="mb-3 font-weight-bold"><strong>Anna Deynah</strong></h3>
-              <h6 class="font-weight-bold cyan-text mb-4">Web Designer</h6>
-
-              <p class="mt-4 text-muted">Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod
-                tempor incididunt
-                ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation
-                ullamco laboris nisi ut aliquip consequat.</p>
-
-              <a class="btn btn-info btn-rounded"> Follow</a>
-
-            </div>
-
-          </div>
-          <!-- Card -->
-
-        </div>
-        <!-- Grid column -->
-
+        
       </div>
       <!-- Grid row -->
 
@@ -227,8 +82,6 @@
 <!-- Main layout -->
 {% endblock content %}
 
-
-{% include 'includes/footer.html' %}
 
 {% block scripts %}
 <script>
@@ -243,6 +96,125 @@
   });
 
 </script>
+
+ <script src="https://cdn.jsdelivr.net/npm/sweetalert2@10"></script>
+ <!-- axios -->
+ <script src="https://cdnjs.cloudflare.com/ajax/libs/axios/0.21.0/axios.min.js"></script>
+
+ <!-- vue -->
+ <script src="https://cdn.jsdelivr.net/npm/vue@2/dist/vue.js"></script>
+
+ <script>
+   // Block Vue JS  
+   new Vue({
+     el: '#subject',
+     data: {
+       subject_name: '{{ subject.subject_name }}',
+       description: '{{ subject.description }}',
+       id: '{{ subject.id }}',
+       isregister: false,
+       loader: false,
+       isSuccess: false,
+       error: false,
+       base_url: window.location.protocol + "//" + window.location.host ,
+     },
+     delimiters: ["${", "}"],
+     mounted() { },
+     methods: {
+       post_subject: function () {
+         if (!this.isregister) {
+           this.error = false
+           this.isSuccess = false
+           this.isregister = true
+           if (this.subject_name == "") {
+             toastr.warning("Subject name can't be empty!");
+             this.isSuccess = false
+             this.isregister = false;
+           } else {
+             axios.defaults.xsrfCookieName = 'csrftoken'
+             axios.defaults.xsrfHeaderName = 'X-CSRFToken'
+             axios.post(this.base_url + '/post_subject', {
+               subject_name: '' + this.subject_name,
+               description: '' + this.description,
+               id: '' + this.id,
+             }).then(response => {
+               console.log(response)
+               this.isregister = false;
+               if (response.data.success) {
+                 this.isSuccess = true
+                 this.message = response.data.message
+                 this.success = response.data.success
+                 toastr.success(this.message);
+                 window.location.replace(this.base_url+'/subjects');
+               } else {
+                 this.message = response.data.message
+                 this.success = response.data.success
+                 toastr.error(this.message);
+                 this.isSuccess = false
+               }
+               console.log("success variable" + this.isSuccess)
+               // console.log("success variable"+this.error)
+             })
+               .catch((err) => {
+                 this.isregister = false;
+                 console.log(err);
+               })
+           }
+         }
+       },
+     
+       delete_subject: function () {
+         if (!this.isregister) {
+           this.error = false
+           this.isSuccess = false
+           this.isregister = true
+           Swal.fire({
+            title: 'Are you sure?',
+            text: "You won't be able to revert this!",
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#3085d6',
+            cancelButtonColor: '#d33',
+            confirmButtonText: 'Yes, delete it!'
+          }).then((result) => {
+            if (result.isConfirmed) {
+
+              axios.defaults.xsrfCookieName = 'csrftoken'
+              axios.defaults.xsrfHeaderName = 'X-CSRFToken'
+              axios.post(this.base_url + '/delete_subject', {
+                id: '' + this.id,
+              }).then(response => {
+                console.log(response)
+                this.isregister = false;
+                if (response.data.success) {
+                  this.isSuccess = true
+                  this.message = response.data.message
+                  this.success = response.data.success
+                  toastr.success(this.message);
+                  Swal.fire(
+                    'Deleted!',
+                    'Subject has been deleted.',
+                    'success'
+                  )
+                  window.location.replace(this.base_url+'/subjects');
+                } else {
+                  this.message = response.data.message
+                  this.success = response.data.success
+                  toastr.error(this.message);
+                  this.isSuccess = false
+                }
+              })
+            }
+            this.isregister = false
+          }).catch((err) => {
+            this.isregister = false;
+            console.log(err);
+          })    
+        }
+       }
+     }
+   });
+   </script>
 {% endblock scripts %}
 
 
