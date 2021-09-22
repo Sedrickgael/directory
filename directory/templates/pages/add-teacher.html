@@ -4,7 +4,7 @@
 
 {% block content %}
 <!-- Main layout -->
-<main>
+<main id="teacher">
   <div class="container-fluid">
 
     <!-- Section: Team v.1 -->
@@ -38,7 +38,7 @@
                   <div class="col-lg-6">
   
                     <div class="md-form form-sm mb-0">
-                      <input type="text" id="last-name" class="form-control form-control-sm">
+                      <input type="text" id="last-name" v-model="last_name" class="form-control form-control-sm">
                       <label for="last-name" class="">Last Name</label>
                     </div>
   
@@ -46,7 +46,7 @@
                   <div class="col-lg-6">
   
                     <div class="md-form form-sm mb-0">
-                      <input type="text" id="first-name" class="form-control form-control-sm">
+                      <input type="text" id="first-name" v-model="first_name" class="form-control form-control-sm">
                       <label for="first-name" class="">First Name</label>
                     </div>
   
@@ -57,7 +57,7 @@
                   <div class="col-lg-6">
   
                     <div class="md-form form-sm mb-0">
-                      <input type="text" id="email" class="form-control form-control-sm">
+                      <input type="text" id="email" v-model="email" class="form-control form-control-sm">
                       <label for="email" class="">Email address</label>
                     </div>
   
@@ -68,7 +68,7 @@
                   <div class="col-md-6">
   
                     <div class="md-form form-sm mb-0">
-                      <input type="text" id="phone-number" class="form-control form-control-sm">
+                      <input type="text" id="phone-number" v-model="phone_number" class="form-control form-control-sm">
                       <label for="phone-number" class="">Phone Number</label>
                     </div>
   
@@ -85,7 +85,7 @@
                   <div class="col-md-6">
   
                     <div class="md-form form-sm mb-0">
-                      <input type="text" id="room" class="form-control form-control-sm">
+                      <input type="text" id="room" v-model="room_number" class="form-control form-control-sm">
                       <label for="room" class="">Room Number</label>
                     </div>
   
@@ -96,10 +96,10 @@
   
                     <div class="md-form form-sm mb-0">
                        <!-- Name -->
-                      <select class="mdb-select md-form" multiple>
+                      <select v-model="subjects_taught" class="mdb-select md-form" multiple>
                         <option value="" disabled selected>Subjects Taught</option>
                         {% for subject in subjects  %}
-                        <option value="{{ subject.id }}">{{ subject.subject_name }}</option>
+                        <option value="{{ subject.subject_name}}|{{ subject.id }}">{{ subject.subject_name }}</option>
                         {% endfor %}
                       </select>
                     </div>
@@ -112,7 +112,7 @@
                 <div class="file-field  col-md-12">
                   <div class="btn btn-primary btn-sm float-left">
                     <span>Choose file</span>
-                    <input type="file">
+                    <input type="file"  v-on:change="handleImageUploaded" ref="file" type="file" accept="image/*">
                   </div>
                   <div class="file-path-wrapper">
                     <input class="file-path validate" type="text" placeholder="Upload your file">
@@ -121,7 +121,13 @@
               </div>
               <!-- Card content -->
             </form>
-
+            {% if user.is_authenticated %}
+            <div class="text-center mb-4">
+              <button v-if="!isregister"  v-on:click.prevent="post_form" class="btn purple-gradient btn-lg">Save</button>
+              <button v-if="isregister" disabled class="btn purple-gradient btn-lg">Save</button>
+              <!-- <button v-if="!isregister"  v-on:click.prevent="delete_subject" class="btn btn-danger btn-lg">Delete</button> -->
+            </div>
+            {% endif %}
           </div>
           <!-- Card -->
 
@@ -135,20 +141,21 @@
           <div class="card profile-card">
 
             <!-- Avatar -->
-            <div class="avatar z-depth-1-half mb-4">
-              <img src="https://mdbootstrap.com/img/Photos/Avatars/img%20(10).jpg" class="rounded-circle" alt="First sample avatar image">
+            <div class="avatar z-depth-1-half mb-4"  v-if="url">
+              <img :src="url" class="rounded-circle" alt="First sample avatar image">
             </div>
 
             <div class="card-body pt-0 mt-0">
 
               <!-- Name -->
-              <h3 class="mb-3 font-weight-bold"><strong>Anna Deynah</strong></h3>
-              <h6 class="font-weight-bold cyan-text mb-4">Web Designer</h6>
+              <h3 class="mb-3 font-weight-bold"><strong>${ last_name }  ${ first_name}</strong></h3>
+              <h6 class="font-weight-bold cyan-text mb-4">${ email }/ ${ phone_number}  / ${ room_number }</h6>
 
-              <p class="mt-4 text-muted">Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod
-                tempor incididunt
-                ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation
-                ullamco laboris nisi ut aliquip consequat.</p>
+              <p class="mt-4 text-muted">
+                <ul>
+                  <li v-for="item in subjects_taught"> ${ item }</li>
+                </ul>
+              </p>
 
             </div>
 
@@ -187,6 +194,109 @@
     });
 
 </script>
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@10"></script>
+<!-- axios -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/axios/0.21.0/axios.min.js"></script>
+
+<!-- vue -->
+<script src="https://cdn.jsdelivr.net/npm/vue@2/dist/vue.js"></script>
+
+<script>
+  // Block Vue JS  
+  new Vue({
+  el: '#teacher',
+  data: {
+  id: '{{ teahcer.id }}',
+  last_name: '{{ teahcer.last_name }}',
+  first_name : '{{ teahcer.first_name }}',
+  email : '{{ teahcer.email }}',
+  profile_picture : '',
+  phone_number : '{{ teahcer.phone_number }}',
+  room_number : '{{ teahcer.room_number }}',
+  subjects_taught : [
+    {% for subject in teacher.subject.all %}
+    '{{ subject.subject_name}}|{{ subject.id }}',
+    {% endfor%}
+  ],
+  url : '{{ teacher.profile_picture.url }}',
+  message : '',
+  isregister: false,
+  loader: false,
+  isSuccess: false,
+  error: false,
+  base_url: window.location.protocol + "//" + window.location.host + "/",
+  },
+  delimiters: ["${", "}"],
+  mounted() { },
+  methods: {
+    post_form: function () {
+    if (!this.isregister) {
+      this.error = false
+      this.isSuccess = false
+      this.isregister = true
+      if (this.last_name == "" || this.first_name == "" || this.email == "" || this.phone_number == "" || this.room_number == "" || this.subjects_taught == []) {
+        toastr.warning("Please complete all required fields!");
+        console.log(this.last_name, this.first_name, this.email, this.phone_number, this.room_number, this.subjects_taught, this.profile_picture)
+        this.isSuccess = false
+        this.isregister = false;
+      } else {
+        //    permet d'imploder des fichiers
+        let formData = new FormData();
+        formData.append('id', this.id);
+        formData.append('last_name', this.last_name);
+        formData.append('first_name', this.first_name);
+        formData.append('email', this.email);
+        formData.append('profile_picture', this.profile_picture);
+        formData.append('phone_number', this.phone_number);
+        formData.append('room_number', this.room_number);
+        formData.append('subjects_taught', this.subjects_taught);
+        axios.defaults.xsrfCookieName = 'csrftoken'
+        axios.defaults.xsrfHeaderName = 'X-CSRFToken'
+        axios.post(this.base_url + 'post_form',
+          formData,
+          {
+            headers: {
+              'Content-Type': 'multipart/form-data',
+            }
+          }).then(response => {
+          console.log(response)
+          this.isregister = false;
+          if (response.data.success) {
+            this.isSuccess = true
+            this.error = false
+            this.isregister = false
+            this.message = response.data.message
+            this.success = response.data.success
+            toastr.success(this.message);
+            
+          } else {
+            this.error = true
+            this.message = response.data.message
+            this.success = response.data.success
+            this.isSuccess = 
+            this.isregister = false
+
+
+            toastr.error(this.message);
+          }
+          console.log("success variable" + this.isSuccess)
+          // console.log("success variable"+this.error)
+        })
+          .catch((err) => {
+            this.isregister = false;
+            console.log(err);
+          })
+      }
+    }
+  },
+  handleImageUploaded() {
+      this.profile_picture = this.$refs.file.files[0];
+      this.url = URL.createObjectURL(this.profile_picture);
+      console.log(this.profile_picture)
+    },
+  }
+  });
+  </script>
 {% endblock scripts %}
 
 

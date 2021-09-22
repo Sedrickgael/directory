@@ -211,4 +211,45 @@ def delete_subject(request):
     }
     return JsonResponse(data, safe=False)
 
+@csrf_exempt
+def post_form(request):
+    try:
+        last_name = request.POST.get("last_name")
+        first_name = request.POST.get("first_name")
+        email = request.POST.get("email")
+        subjects_taught = request.POST.get("subjects_taught")
+        phone_number = request.POST.get("phone_number")
+        room_number = request.POST.get("room_number")
+        profile_picture = request.FILES["profile_picture"]
+        teacher_id = request.POST.get("id")
+        print("################################", subjects_taught)
+        try:
+            teacher = models.Teacher.objects.get(id=int(teacher_id))
+            message = "Teacher updated"
+        except Exception as e:
+            print(e)
+            teacher = models.Teacher()
+            message = "Teacher created"
+        teacher.last_name = last_name
+        teacher.first_name = first_name
+        teacher.email = email
 
+        teacher.phone_number = phone_number
+        teacher.room_number = room_number
+        teacher.profile_picture = profile_picture
+        teacher.save()
+        for subject in subjects_taught:
+            print(subject, "&&&&&&&&&&&&&&&&&&&&&&&")
+            teacher.subjects_taught.add(subject.rsplit("|")[1])
+        teacher.save()
+        success = True
+
+    except Exception as e :
+        print(e)
+        success = False
+        message = "An error occurred"
+    data = {
+        'success':success,
+        'message':message,
+    }
+    return JsonResponse(data, safe=False)

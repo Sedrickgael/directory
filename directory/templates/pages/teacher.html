@@ -54,9 +54,7 @@
                   <tr>
                     <th>Picture
                     </th>
-                    <th>Last Name
-                    </th>
-                    <th>First Name
+                    <th>Full Name
                     </th>
                     <th>Email
                     </th>
@@ -74,10 +72,9 @@
                   {% for teacher in teachers %}
                   <tr>
                     <td>
-                      <img src="{{ teacher.profile_picture.url }}" class=""  alt="">
+                      <img width="100px" src="{{ teacher.profile_picture.url }}" class=""  alt="">
                     </td>
-                    <td>{{ teacher.last_name }}</td>
-                    <td>{{ teacher.first_name }}</td>
+                    <td>{{ teacher.last_name }} {{ teacher.first_name }}</td>
                     <td>{{ teacher.email }}</td>
                     <td>{{ teacher.phone_number }}</td>
                     <td>{{ teacher.room_number }}</td>
@@ -99,9 +96,7 @@
                   <tr>
                     <th>Picture
                     </th>
-                    <th>Last Name
-                    </th>
-                    <th>First Name
+                    <th>Full Name
                     </th>
                     <th>Email
                     </th>

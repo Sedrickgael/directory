@@ -22,4 +22,5 @@ urlpatterns = [
     path('post_login', views.islogin, name='post_login'),
     path('post_subject', views.post_subject, name='post_subject'),
     path('delete_subject', views.delete_subject, name='delete_subject'),
+    path('post_form', views.post_form, name='post_form'),
 ]
