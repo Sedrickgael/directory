@@ -117,7 +117,7 @@ class TeacherAdmin(admin.ModelAdmin):
 
     #cette fonction nous pemmet d'avoir une vue d'image
     def profile_picture_preview(self, obj):
-        return mark_safe('<img src="{url}" width="100px" height="100px" />'.format(url = obj.profile_picture))
+        return mark_safe('<img src="{url}" width="100px" height="100px" />'.format(url = obj.profile_picture.url))
 
 
 def _register(model, admin_class):

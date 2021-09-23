@@ -19,7 +19,7 @@ class Subject(models.Model):
     slug = models.SlugField(unique=True, editable=False, null=True,  blank=True)
 
     def save(self, *args, **kwargs):
-        self.slug = '-'.join((slugify(self.subject_name), slugify(self.id)))
+        self.slug = '-'.join((slugify(self.subject_name), slugify(self.date_add)))
         super(Subject, self).save(*args, **kwargs)
 
 
@@ -56,7 +56,7 @@ class Teacher(models.Model):
     slug = models.SlugField(unique=True, editable=False, null=True,  blank=True)
 
     def save(self, *args, **kwargs):
-        self.slug = '-'.join((slugify(self.last_name), slugify(self.id)))
+        self.slug = '-'.join((slugify(self.last_name), slugify(self.date_add)))
         super(Teacher, self).save(*args, **kwargs)
 
 
@@ -70,3 +70,29 @@ class Teacher(models.Model):
         """Unicode representation of Teacher."""
         return self.last_name + ' ' + self.last_name + '(' + self.email + ')'
 
+
+
+
+class UploadFile(models.Model):
+    """Model definition for UploadFile."""
+
+    # TODO: Define fields here
+    upload_file = models.FileField(upload_to="upload/file")
+
+
+    # standar
+
+    statut = models.BooleanField(default=True)
+    date_add = models.DateTimeField(auto_now_add=True)
+    date_update = models.DateTimeField(auto_now=True)
+
+
+    class Meta:
+        """Meta definition for Upload File."""
+
+        verbose_name = 'Uploaded File'
+        verbose_name_plural = 'Uploaded Files'
+
+    def __str__(self):
+        """Unicode representation of Upload File."""
+        return 'file'

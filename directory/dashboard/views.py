@@ -211,38 +211,82 @@ def delete_subject(request):
     }
     return JsonResponse(data, safe=False)
 
+
+@csrf_exempt
+def delete_teacher(request):
+
+    postdata = json.loads(request.body.decode('utf-8'))
+
+    # for delete
+    teacher_id = postdata['id']
+    message = ""
+    success = False
+    try:
+        try:
+            # update
+            teacher = models.Teacher.objects.get(id=int(teacher_id))
+            teacher.delete()
+            success = True
+        except Exception as e:
+            print(e)
+            message = "error"
+    except Exception as e:
+        print(e)
+        success = False
+        message = str(e)
+    data = {
+        'success':success,
+        'message':message,
+    }
+    return JsonResponse(data, safe=False)
+
 @csrf_exempt
 def post_form(request):
     try:
         last_name = request.POST.get("last_name")
         first_name = request.POST.get("first_name")
         email = request.POST.get("email")
-        subjects_taught = request.POST.get("subjects_taught")
+        subjects_taught = request.POST.get("subjects_taught").rsplit(',')
+        print(subjects_taught, "333333333333333333333")
         phone_number = request.POST.get("phone_number")
         room_number = request.POST.get("room_number")
-        profile_picture = request.FILES["profile_picture"]
         teacher_id = request.POST.get("id")
         print("################################", subjects_taught)
-        try:
-            teacher = models.Teacher.objects.get(id=int(teacher_id))
-            message = "Teacher updated"
-        except Exception as e:
-            print(e)
-            teacher = models.Teacher()
-            message = "Teacher created"
-        teacher.last_name = last_name
-        teacher.first_name = first_name
-        teacher.email = email
+        if len(subjects_taught) > 5:
+            success = False
+            message = "Teacher can't have more than five(5) subjects"
+            
+        else:
+            try:
+                teacher = models.Teacher.objects.get(id=int(teacher_id))
+                message = "Teacher updated"
+            except Exception as e:
+                print(e)
+                teacher = models.Teacher()
+                message = "Teacher created"
+            teacher.last_name = last_name
+            teacher.first_name = first_name
+            teacher.email = email
 
-        teacher.phone_number = phone_number
-        teacher.room_number = room_number
-        teacher.profile_picture = profile_picture
-        teacher.save()
-        for subject in subjects_taught:
-            print(subject, "&&&&&&&&&&&&&&&&&&&&&&&")
-            teacher.subjects_taught.add(subject.rsplit("|")[1])
-        teacher.save()
-        success = True
+            teacher.phone_number = phone_number
+            teacher.room_number = room_number
+            teacher.save()
+            teacher.subjects_taught.clear()
+
+            # save picture
+            try:
+                profile_picture = request.FILES["profile_picture"]
+                teacher.profile_picture = profile_picture
+                teacher.save()
+            except:
+                pass
+
+            # save subjectt taught
+            for subject in subjects_taught:
+                print(subject, "&&&&&&&&&&&&&&&&&&&&&&&")
+                teacher.subjects_taught.add(subject.rsplit("|")[1])
+            teacher.save()
+            success = True
 
     except Exception as e :
         print(e)
@@ -250,6 +294,89 @@ def post_form(request):
         message = "An error occurred"
     data = {
         'success':success,
+        'message':message,
+    }
+    return JsonResponse(data, safe=False)
+
+
+
+
+
+
+@csrf_exempt
+def upload_file(request):
+    error = False
+    success =False
+    message = ""
+    try:
+        teachers_csv = request.FILES["teachers_csv"]
+        uploaded_file = models.UploadFile()
+        uploaded_file.upload_file = teachers_csv
+        uploaded_file.save()
+
+        with open(uploaded_file.upload_file.path, 'r' ) as reader:
+            all_teachers_in_file = reader.readlines()
+
+            for i in range(1, len(all_teachers_in_file)):
+                if all_teachers_in_file[i].rsplit(',')[3] is not None and all_teachers_in_file[i].rsplit(',')[3] != "" and all_teachers_in_file[i].rsplit(',')[0] is not None and all_teachers_in_file[i].rsplit(',')[0] != "" and all_teachers_in_file[i].rsplit(',')[2] is not None and all_teachers_in_file[i].rsplit(',')[2] != "":
+                    try:
+                        teacher = models.Teacher.objects.get(email=all_teachers_in_file[i].rsplit(',')[3])
+                        error = True
+                    except Exception as e:
+                        print(e)
+                        teacher = models.Teacher()
+                        teacher.last_name = all_teachers_in_file[i].rsplit(',')[1]
+                        teacher.first_name = all_teachers_in_file[i].rsplit(',')[0]
+                        teacher.email = all_teachers_in_file[i].rsplit(',')[3]
+
+                        teacher.phone_number = all_teachers_in_file[i].rsplit(',')[4]
+                        teacher.room_number = all_teachers_in_file[i].rsplit(',')[5]
+                        teacher.save()
+
+                        # save subject 
+                        if '"' in all_teachers_in_file[i]:
+                            subjects = all_teachers_in_file[i].rsplit('"')[1]
+                        else:
+                            subjects = all_teachers_in_file[i].rsplit(',')[6]
+                        if ", " in subjects:
+                            subjects = subjects.replace(", ", ",")
+                        for subject in subjects.rsplit(','):
+                            print("@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@", subject)
+                            try:
+                                subject_e = models.Subject.objects.get(subject_name__icontains=subject)
+                            except Exception as e:
+                                print(e)
+                                subject_e = models.Subject()
+                                subject_e.subject_name = subject
+                                subject_e.save()
+                            # add subject to teacher
+                            if teacher.subjects_taught.count() < 5 :
+                                teacher.subjects_taught.add(subject_e.id)
+                                teacher.save()
+                            else:
+                                error = True
+                        teacher.save()
+                        # save profile picture
+                        try:
+                            profile_picture = "Teachers/" + all_teachers_in_file[i].rsplit(',')[2]
+                            teacher.profile_picture = profile_picture
+                            teacher.save()
+                        except Exception as e:
+                            print(e)
+                            pass
+                    success = True
+                    message = "Success"
+                else:
+                    error = True
+    except Exception as e :
+        print(e, "3333333355555555555555555741")
+        success = False
+        message = "An error occurred"
+    if error:
+        message = "Datas loaded with error"
+    data = {
+        'success':success,
+        'errorr':error,
         'message':message,
     }
     return JsonResponse(data, safe=False)

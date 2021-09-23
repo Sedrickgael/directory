@@ -37,17 +37,17 @@
                   <!-- Grid column -->
                   <div class="col-lg-6">
   
+                    <label for="last-name" class="">Last Name</label>
                     <div class="md-form form-sm mb-0">
                       <input type="text" id="last-name" v-model="last_name" class="form-control form-control-sm">
-                      <label for="last-name" class="">Last Name</label>
                     </div>
   
                   </div>
                   <div class="col-lg-6">
   
+                    <label for="first-name" class="">First Name</label>
                     <div class="md-form form-sm mb-0">
                       <input type="text" id="first-name" v-model="first_name" class="form-control form-control-sm">
-                      <label for="first-name" class="">First Name</label>
                     </div>
   
                   </div>
@@ -56,9 +56,9 @@
                   <!-- Grid column -->
                   <div class="col-lg-6">
   
+                    <label for="email" class="">Email address</label>
                     <div class="md-form form-sm mb-0">
                       <input type="text" id="email" v-model="email" class="form-control form-control-sm">
-                      <label for="email" class="">Email address</label>
                     </div>
   
                   </div>
@@ -67,9 +67,9 @@
                   <!-- Grid column -->
                   <div class="col-md-6">
   
+                    <label for="phone-number" class="">Phone Number</label>
                     <div class="md-form form-sm mb-0">
                       <input type="text" id="phone-number" v-model="phone_number" class="form-control form-control-sm">
-                      <label for="phone-number" class="">Phone Number</label>
                     </div>
   
                   </div>
@@ -84,9 +84,9 @@
                   <!-- Grid column -->
                   <div class="col-md-6">
   
+                    <label for="room" class="">Room Number</label>
                     <div class="md-form form-sm mb-0">
                       <input type="text" id="room" v-model="room_number" class="form-control form-control-sm">
-                      <label for="room" class="">Room Number</label>
                     </div>
   
                   </div>
@@ -125,7 +125,7 @@
             <div class="text-center mb-4">
               <button v-if="!isregister"  v-on:click.prevent="post_form" class="btn purple-gradient btn-lg">Save</button>
               <button v-if="isregister" disabled class="btn purple-gradient btn-lg">Save</button>
-              <!-- <button v-if="!isregister"  v-on:click.prevent="delete_subject" class="btn btn-danger btn-lg">Delete</button> -->
+              <button v-if="!isregister"  v-on:click.prevent="delete_teacher" class="btn btn-danger btn-lg">Delete</button>
             </div>
             {% endif %}
           </div>
@@ -206,16 +206,16 @@
   new Vue({
   el: '#teacher',
   data: {
-  id: '{{ teahcer.id }}',
-  last_name: '{{ teahcer.last_name }}',
-  first_name : '{{ teahcer.first_name }}',
-  email : '{{ teahcer.email }}',
+  id: '{{ teacher.id }}',
+  last_name: '{{ teacher.last_name }}',
+  first_name : '{{ teacher.first_name }}',
+  email : '{{ teacher.email }}',
   profile_picture : '',
-  phone_number : '{{ teahcer.phone_number }}',
-  room_number : '{{ teahcer.room_number }}',
+  phone_number : '{{ teacher.phone_number }}',
+  room_number : '{{ teacher.room_number }}',
   subjects_taught : [
-    {% for subject in teacher.subject.all %}
-    '{{ subject.subject_name}}|{{ subject.id }}',
+    {% for subject in teacher.subjects_taught.all %}
+    "{{ subject.subject_name}}|{{ subject.id }}" ,
     {% endfor%}
   ],
   url : '{{ teacher.profile_picture.url }}',
@@ -227,7 +227,9 @@
   base_url: window.location.protocol + "//" + window.location.host + "/",
   },
   delimiters: ["${", "}"],
-  mounted() { },
+  mounted() {
+    console.log("#######################", this.subjects_taught)
+   },
   methods: {
     post_form: function () {
     if (!this.isregister) {
@@ -240,7 +242,6 @@
         this.isSuccess = false
         this.isregister = false;
       } else {
-        //    permet d'imploder des fichiers
         let formData = new FormData();
         formData.append('id', this.id);
         formData.append('last_name', this.last_name);
@@ -268,7 +269,7 @@
             this.message = response.data.message
             this.success = response.data.success
             toastr.success(this.message);
-            
+            window.location.replace(this.base_url)
           } else {
             this.error = true
             this.message = response.data.message
@@ -289,11 +290,60 @@
       }
     }
   },
-  handleImageUploaded() {
-      this.profile_picture = this.$refs.file.files[0];
-      this.url = URL.createObjectURL(this.profile_picture);
-      console.log(this.profile_picture)
+    handleImageUploaded() {
+        this.profile_picture = this.$refs.file.files[0];
+        this.url = URL.createObjectURL(this.profile_picture);
+        console.log(this.profile_picture)
     },
+    delete_teacher: function () {
+          if (!this.isregister) {
+            this.error = false
+            this.isSuccess = false
+            this.isregister = true
+            Swal.fire({
+             title: 'Are you sure?',
+             text: "You won't be able to revert this!",
+             icon: 'warning',
+             showCancelButton: true,
+             confirmButtonColor: '#3085d6',
+             cancelButtonColor: '#d33',
+             confirmButtonText: 'Yes, delete it!'
+           }).then((result) => {
+             if (result.isConfirmed) {
+  
+               axios.defaults.xsrfCookieName = 'csrftoken'
+               axios.defaults.xsrfHeaderName = 'X-CSRFToken'
+               axios.post(this.base_url + '/delete_teacher', {
+                 id: '' + this.id,
+               }).then(response => {
+                 console.log(response)
+                 this.isregister = false;
+                 if (response.data.success) {
+                   this.isSuccess = true
+                   this.message = response.data.message
+                   this.success = response.data.success
+                   toastr.success(this.message);
+                   Swal.fire(
+                     'Deleted!',
+                     'Teacher has been deleted.',
+                     'success'
+                   )
+                   window.location.replace(this.base_url);
+                 } else {
+                   this.message = response.data.message
+                   this.success = response.data.success
+                   toastr.error(this.message);
+                   this.isSuccess = false
+                 }
+               })
+             }
+             this.isregister = false
+           }).catch((err) => {
+             this.isregister = false;
+             console.log(err);
+           })    
+         }
+      }
   }
   });
   </script>
