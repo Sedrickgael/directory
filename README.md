@@ -20,3 +20,11 @@ pip install -r requirements.txt
 ```BAT
 python manage.py runserver
 ```
+
+
+# DEMO LINK
+https://teacher-directory.herokuapp.com/
+
+# CREDENTIALS
+user : admin
+password admin
