@@ -35,10 +35,12 @@
               <form class="md-form">
                 <div class="file-field">
                   <a href="{% url 'add_teacher' %}" class="btn btn-warning btn-sm">Add teacher</a>
+                  {% if user.is_authenticated %}
                   <div class="btn btn-primary btn-sm float-left">
                     <span>Choose file</span>
                     <input type="file" v-model="new_file" v-on:change="handleImageUploaded" ref="file" type="file" accept=".csv, application/vnd.openxmlformats-officedocument.spreadsheetml.sheet, application/vnd.ms-excel">
                   </div>
+                  {% endif %}
                 </div>
               </form>
             </div>
