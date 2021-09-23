@@ -322,8 +322,7 @@ def upload_file(request):
                     try:
                         teacher = models.Teacher.objects.get(email=all_teachers_in_file[i].rsplit(',')[3])
                         error = True
-                    except Exception as e:
-                        print(e)
+                    except:
                         teacher = models.Teacher()
                         teacher.last_name = all_teachers_in_file[i].rsplit(',')[1]
                         teacher.first_name = all_teachers_in_file[i].rsplit(',')[0]
@@ -341,11 +340,9 @@ def upload_file(request):
                         if ", " in subjects:
                             subjects = subjects.replace(", ", ",")
                         for subject in subjects.rsplit(','):
-                            print("@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@", subject)
                             try:
                                 subject_e = models.Subject.objects.get(subject_name__icontains=subject)
-                            except Exception as e:
-                                print(e)
+                            except:
                                 subject_e = models.Subject()
                                 subject_e.subject_name = subject
                                 subject_e.save()
@@ -361,15 +358,13 @@ def upload_file(request):
                             profile_picture = "Teachers/" + all_teachers_in_file[i].rsplit(',')[2]
                             teacher.profile_picture = profile_picture
                             teacher.save()
-                        except Exception as e:
-                            print(e)
+                        except:
                             pass
                     success = True
                     message = "Success"
                 else:
                     error = True
-    except Exception as e :
-        print(e, "3333333355555555555555555741")
+    except:
         success = False
         message = "An error occurred"
     if error:
