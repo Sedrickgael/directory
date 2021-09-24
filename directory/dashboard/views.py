@@ -125,7 +125,7 @@ def islogin(request):
                 'success':True,
                 'message':'Vous êtes connectés!!!',
             }
-            return JsonResponse(datas,safe=False) # page si connect
+            return JsonResponse(datas,safe=False) 
                 
         else:
             data = {
@@ -194,7 +194,7 @@ def delete_subject(request):
     success = False
     try:
         try:
-            # update
+            # delete
             subject = models.Subject.objects.get(id=int(subject_id))
             subject.delete()
             success = True
@@ -223,7 +223,7 @@ def delete_teacher(request):
     success = False
     try:
         try:
-            # update
+            # delete
             teacher = models.Teacher.objects.get(id=int(teacher_id))
             teacher.delete()
             success = True
@@ -252,16 +252,19 @@ def post_form(request):
         room_number = request.POST.get("room_number")
         teacher_id = request.POST.get("id")
         print("################################", subjects_taught)
+
+        # check if teacher have more than 5 subjects
         if len(subjects_taught) > 5:
             success = False
             message = "Teacher can't have more than five(5) subjects"
             
         else:
             try:
+                # update
                 teacher = models.Teacher.objects.get(id=int(teacher_id))
                 message = "Teacher updated"
             except Exception as e:
-                print(e)
+                # create
                 teacher = models.Teacher()
                 message = "Teacher created"
             teacher.last_name = last_name
@@ -314,15 +317,19 @@ def upload_file(request):
         uploaded_file.upload_file = teachers_csv
         uploaded_file.save()
 
+        # open file in read
         with open(uploaded_file.upload_file.path, 'r' ) as reader:
             all_teachers_in_file = reader.readlines()
 
             for i in range(1, len(all_teachers_in_file)):
                 if all_teachers_in_file[i].rsplit(',')[3] is not None and all_teachers_in_file[i].rsplit(',')[3] != "" and all_teachers_in_file[i].rsplit(',')[0] is not None and all_teachers_in_file[i].rsplit(',')[0] != "" and all_teachers_in_file[i].rsplit(',')[2] is not None and all_teachers_in_file[i].rsplit(',')[2] != "":
+                    
                     try:
+                        # check if mail is used
                         teacher = models.Teacher.objects.get(email=all_teachers_in_file[i].rsplit(',')[3])
                         error = True
                     except:
+                        # create teacher
                         teacher = models.Teacher()
                         teacher.last_name = all_teachers_in_file[i].rsplit(',')[1]
                         teacher.first_name = all_teachers_in_file[i].rsplit(',')[0]
