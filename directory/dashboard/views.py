@@ -31,11 +31,12 @@ def subjects(request):
     }
     return render(request, 'pages/subjects.html', datas)
 
-#  teacher profil view
-@login_required(login_url = 'login')
-def profil(request):
-    datas = {
 
+#  teacher profil view
+def profil(request, slug):
+    teacher = models.Teacher.objects.get(slug=slug)
+    datas = {
+        'teacher':teacher, 
     }
     return render(request, 'pages/profil.html', datas)
 

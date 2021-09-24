@@ -23,7 +23,7 @@
             <div class="admin-up d-flex justify-content-start">
               <i class="fas fa-users info-color py-4 mr-3 z-depth-2"></i>
               <div class="data">
-                <h5 class="font-weight-bold dark-grey-text">Add teacher - <span class="text-muted">Complete Teacher Profile</span></h5>
+                <h5 class="font-weight-bold dark-grey-text">Profil - <span class="text-muted">Teacher Profile</span></h5>
               </div>
             </div>
             <!-- Card Data -->
@@ -37,17 +37,17 @@
                   <!-- Grid column -->
                   <div class="col-lg-6">
   
+                    <label for="last-name" class="">Last Name</label>
                     <div class="md-form form-sm mb-0">
-                      <input type="text" id="last-name" class="form-control form-control-sm">
-                      <label for="last-name" class="">Last Name</label>
+                      <input disabled type="text" id="last-name" value="{{ teacher.last_name }}" class="form-control form-control-sm">
                     </div>
   
                   </div>
                   <div class="col-lg-6">
   
+                    <label for="first-name" class="">First Name</label>
                     <div class="md-form form-sm mb-0">
-                      <input type="text" id="first-name" class="form-control form-control-sm">
-                      <label for="first-name" class="">First Name</label>
+                      <input disabled type="text" id="first-name" value="{{ teacher.first_name }}" class="form-control form-control-sm">
                     </div>
   
                   </div>
@@ -56,9 +56,9 @@
                   <!-- Grid column -->
                   <div class="col-lg-6">
   
+                    <label for="email" class="">Email address</label>
                     <div class="md-form form-sm mb-0">
-                      <input type="text" id="email" class="form-control form-control-sm">
-                      <label for="email" class="">Email address</label>
+                      <input disabled type="text" id="email" value="{{ teacher.email }}" class="form-control form-control-sm">
                     </div>
   
                   </div>
@@ -67,9 +67,9 @@
                   <!-- Grid column -->
                   <div class="col-md-6">
   
+                    <label for="phone-number" class="">Phone Number</label>
                     <div class="md-form form-sm mb-0">
-                      <input type="text" id="phone-number" class="form-control form-control-sm">
-                      <label for="phone-number" class="">Phone Number</label>
+                      <input disabled type="text" id="phone-number" value="{{ teacher.phone_number }}" class="form-control form-control-sm">
                     </div>
   
                   </div>
@@ -84,9 +84,9 @@
                   <!-- Grid column -->
                   <div class="col-md-6">
   
+                    <label for="room" class="">Room Number</label>
                     <div class="md-form form-sm mb-0">
-                      <input type="text" id="room" class="form-control form-control-sm">
-                      <label for="room" class="">Room Number</label>
+                      <input disabled value="{{ teacher.room_number }}" type="text" id="room" class="form-control form-control-sm">
                     </div>
   
                   </div>
@@ -95,9 +95,11 @@
                   <div class="col-md-6">
   
                     <div class="md-form form-sm mb-0">
-                      <select class="select" multiple>
-                        {% for subject in subjects %}
-                        <option value="{{ subject.id }}">{{ subject.subject_name }}</option>
+                       <!-- Name -->
+                      <select disabled v-model="subjects_taught" class="mdb-select md-form" multiple>
+                        <option value="" disabled selected>Subjects Taught</option>
+                        {% for subject in teacher.subjects_taught.all  %}
+                        <option value="{{ subject.subject_name}}|{{ subject.id }}">{{ subject.subject_name }}</option>
                         {% endfor %}
                       </select>
                     </div>
@@ -107,15 +109,6 @@
                 </div>
                 <!-- Grid row -->
                 <br>
-                <div class="file-field  col-md-12">
-                  <div class="btn btn-primary btn-sm float-left">
-                    <span>Choose file</span>
-                    <input type="file">
-                  </div>
-                  <div class="file-path-wrapper">
-                    <input class="file-path validate" type="text" placeholder="Upload your file">
-                  </div>
-                </div>
               </div>
               <!-- Card content -->
             </form>
@@ -133,20 +126,23 @@
           <div class="card profile-card">
 
             <!-- Avatar -->
-            <div class="avatar z-depth-1-half mb-4">
-              <img src="https://mdbootstrap.com/img/Photos/Avatars/img%20(10).jpg" class="rounded-circle" alt="First sample avatar image">
+            <div class="avatar z-depth-1-half mb-4"  v-if="url">
+              <img src="{{teacher.profile_picture.url}}" class="rounded-circle" alt="{{ teacher.last_name }} {{ teacher.first_name }}">
             </div>
 
             <div class="card-body pt-0 mt-0">
 
               <!-- Name -->
-              <h3 class="mb-3 font-weight-bold"><strong>Anna Deynah</strong></h3>
-              <h6 class="font-weight-bold cyan-text mb-4">Web Designer</h6>
+              <h3 class="mb-3 font-weight-bold"><strong>{{ teacher.last_name }} {{ teacher.first_name }}</strong></h3>
+              <h6 class="font-weight-bold cyan-text mb-4">{{ teacher.email }} / {{ teacher.phone_number }} / {{ teacher.room_number }}</h6>
 
-              <p class="mt-4 text-muted">Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod
-                tempor incididunt
-                ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation
-                ullamco laboris nisi ut aliquip consequat.</p>
+              <p class="mt-4 text-muted">
+                <ul>
+                  {% for subject in teacher.subjects_taught.all %}
+                  <li> {{ subject.subject_name }}</li>
+                  {% endfor %}
+                </ul>
+              </p>
 
             </div>
 
@@ -179,6 +175,10 @@
     wheelPropagation: true,
     minScrollbarLength: 20
   });
+  // Material Select Initialization
+  $(document).ready(function () {
+      $('.mdb-select').materialSelect();
+    });
 
 </script>
 {% endblock scripts %}
